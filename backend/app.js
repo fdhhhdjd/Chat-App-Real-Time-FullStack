@@ -22,9 +22,10 @@ app.use(
   })
 );
 //!router import
+const Users = require("./Routes/UserRoute.js");
 
 //!Link router Main
-
+app.use("/api/auth", Users);
 //Auhthenticate customer
 
 // app.use(express.static(path.join(__dirname, "../frontend/build")));

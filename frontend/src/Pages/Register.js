@@ -5,9 +5,18 @@ import { useNavigate, Link } from "react-router-dom";
 import { Logo } from "../Import/ImportImg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useDispatch, useSelector } from "react-redux";
+import { RegisterRoute } from "../utils/ApiRoutes";
+import { RegisterInitial } from "../Redux/AuthenticationSlice";
+const initialState = {
+  username: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
 export default function Register() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const toastOptions = {
     position: "bottom-right",
     autoClose: 8000,
@@ -15,13 +24,8 @@ export default function Register() {
     draggable: true,
     theme: "dark",
   };
-  const [values, setValues] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
+  const [values, setValues] = useState(initialState);
+  const { username, email, password, confirmPassword } = values;
   useEffect(() => {
     if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
       navigate("/");
@@ -63,7 +67,7 @@ export default function Register() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (handleValidation()) {
-      alert("Cung oke lam");
+      dispatch(RegisterInitial({ RegisterRoute, username, email, password }));
     }
   };
 
