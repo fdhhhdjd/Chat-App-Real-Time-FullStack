@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import styled from "styled-components";
-import { useNavigate, Link } from "react-router-dom";
-import { Logo } from "../Import/ImportImg";
-import { ToastContainer, toast } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useDispatch, useSelector } from "react-redux";
-import { RegisterRoute } from "../utils/ApiRoutes";
+import styled from "styled-components";
+import { Logo } from "../Import/ImportImg";
 import { RegisterInitial } from "../Redux/AuthenticationSlice";
+import { RegisterRoute } from "../utils/ApiRoutes";
 const initialState = {
   username: "",
   email: "",
@@ -37,7 +36,6 @@ export default function Register() {
   };
 
   const handleValidation = () => {
-    const { password, confirmPassword, username, email } = values;
     if (password !== confirmPassword) {
       toast.error(
         "Password and confirm password should be same.",
@@ -67,9 +65,27 @@ export default function Register() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (handleValidation()) {
-      dispatch(RegisterInitial({ RegisterRoute, username, email, password }));
+      dispatch(
+        RegisterInitial({ RegisterRoute, username, email, password })
+      ).then((data) => {
+        if (data?.payload?.status === false) {
+          toast.error(data.payload.msg, toastOptions);
+        } else {
+          localStorage.setItem(
+            process.env.REACT_APP_LOCALHOST_KEY,
+            JSON.stringify(data.user)
+          );
+          toast.success(data.payload.msg, toastOptions);
+          navigate("/");
+        }
+      });
     }
   };
+  useEffect(() => {
+    if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+      navigate("/login");
+    }
+  }, []);
 
   return (
     <>

@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import styled from "styled-components";
-import { useNavigate, Link } from "react-router-dom";
-import { Logo } from "../Import/ImportImg";
-import { ToastContainer, toast } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import styled from "styled-components";
+import { Logo } from "../Import/ImportImg";
+import { LoginInitial } from "../Redux/AuthenticationSlice";
+import { LoginRoute } from "../utils/ApiRoutes";
+const initialState = { username: "", password: "" };
 export default function Login() {
   const navigate = useNavigate();
-  const [values, setValues] = useState({ username: "", password: "" });
+  const dispatch = useDispatch();
+  const [values, setValues] = useState(initialState);
+  const { username, password } = values;
   const toastOptions = {
     position: "bottom-right",
     autoClose: 8000,
@@ -21,7 +25,6 @@ export default function Login() {
       navigate("/");
     }
   }, []);
-
   const handleChange = (event) => {
     setValues({ ...values, [event.target.name]: event.target.value });
   };
@@ -41,10 +44,22 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (validateForm()) {
-      alert("Cung oke lam");
+      dispatch(LoginInitial({ LoginRoute, username, password })).then(
+        (data) => {
+          if (data?.payload?.status === false) {
+            toast.error(data.payload.msg, toastOptions);
+          } else {
+            localStorage.setItem(
+              process.env.REACT_APP_LOCALHOST_KEY,
+              JSON.stringify(data?.payload?.user)
+            );
+            toast.success(data.payload.msg, toastOptions);
+            navigate("/");
+          }
+        }
+      );
     }
   };
-
   return (
     <>
       <FormContainer>

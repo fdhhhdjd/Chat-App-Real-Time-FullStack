@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import { Chat, Login, Register } from "./Import/Index";
+import { Chat, Login, Register, SetAvatar } from "./Import/Index";
 import "./responsive.css";
 function App() {
   return (
@@ -10,6 +10,7 @@ function App() {
         <Route path="/" element={<Chat />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/setAvatar" element={<SetAvatar />} />
       </Routes>
     </React.Fragment>
   );
