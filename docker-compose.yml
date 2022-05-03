@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: shop-shoe-api-1
+    container_name: Chat-App
     restart: unless-stopped
     volumes:
       - ./src:/usr/src/app/src
@@ -20,18 +20,6 @@ services:
       - "5000:5000"
     command: npm run dev
 
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: ./frontend/Dockerfile
-  #   container_name: frontend
-  #   restart: unless-stopped
-  #   ports:
-  #     - '3000:3000'
-  #   volumes:
-  #   - ./frontend/src:/app/src
-  #   depends_on:
-  #   - shop-shoe-api
 networks:
   upload-network:
     driver: bridge
