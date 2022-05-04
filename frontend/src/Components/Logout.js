@@ -13,7 +13,7 @@ export default function Logout() {
       localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
     )._id;
     dispatch(LogoutInitial({ LogoutRoute, id })).then((data) => {
-      if (data?.payload.status === 200) {
+      if (data?.payload?.status === true) {
         localStorage.clear();
         navigate("/login");
       }

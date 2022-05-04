@@ -1,17 +1,27 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import { Logout } from "../Import/Index";
+import { Logout, ChatInput } from "../Import/Index";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-
+import { useDispatch } from "react-redux";
+import { GetMessageInitial, SendMessageInitial } from "../Redux/MessageSlice";
+import { GetMessageRoute, SendMessageRoute } from "../utils/ApiRoutes";
 export default function ChatContainer({ currentChat, socket }) {
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
+  const dispatch = useDispatch();
   const [arrivalMessage, setArrivalMessage] = useState(null);
 
   useEffect(async () => {
     const data = await JSON.parse(
       localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+    );
+    let from = data._id;
+    let to = currentChat._id;
+    dispatch(GetMessageInitial({ GetMessageRoute, from, to })).then(
+      (response) => {
+        console.log(response);
+        setMessages(response?.payload);
+      }
     );
     setMessages();
   }, [currentChat]);
@@ -27,9 +37,31 @@ export default function ChatContainer({ currentChat, socket }) {
     getCurrentChat();
   }, [currentChat]);
 
-  const handleSendMsg = async (msg) => {};
+  const handleSendMsg = async (msg) => {
+    const data = await JSON.parse(
+      localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+    );
+    socket.current.emit("send-msg", {
+      to: currentChat._id,
+      from: data._id,
+      msg,
+    });
+    let from = data._id;
+    let to = currentChat._id;
+    let message = msg;
+    dispatch(SendMessageInitial({ SendMessageRoute, from, to, message }));
+    const msgs = [...messages];
+    msgs.push({ fromSelf: true, message: msg });
+    setMessages(msgs);
+  };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (socket.current) {
+      socket.current.on("msg-recieve", (msg) => {
+        setArrivalMessage({ fromSelf: false, message: msg });
+      });
+    }
+  }, []);
 
   useEffect(() => {
     arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
@@ -56,7 +88,7 @@ export default function ChatContainer({ currentChat, socket }) {
         <Logout />
       </div>
       <div className="chat-messages">
-        {messages.map((message) => {
+        {messages?.map((message) => {
           return (
             <div ref={scrollRef} key={uuidv4()}>
               <div
@@ -72,6 +104,7 @@ export default function ChatContainer({ currentChat, socket }) {
           );
         })}
       </div>
+      <ChatInput handleSendMsg={handleSendMsg} />
     </Container>
   );
 }

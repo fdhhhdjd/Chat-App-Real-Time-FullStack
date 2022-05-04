@@ -1,23 +1,63 @@
-import React, { useRef, useState } from "react";
-import styled from "styled-components";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
-import { Welcome } from "../Import/Index";
+import styled from "styled-components";
+import { ChatContainer, Contacts, Welcome } from "../Import/Index";
+import { GetProfileAuthInitial } from "../Redux/AuthenticationSlice";
+import { GetProfileRoute, host } from "../utils/ApiRoutes";
 
 export default function Chat() {
-  const [contacts, setContacts] = useState([]);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const socket = useRef();
+  const [contacts, setContacts] = useState([]);
   const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
-  const handleChatChange = () => {};
+  useEffect(async () => {
+    if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+      navigate("/login");
+    } else {
+      setCurrentUser(
+        await JSON.parse(
+          localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+        )
+      );
+    }
+  }, []);
+  useEffect(() => {
+    if (currentUser) {
+      socket.current = io(host);
+      socket.current.emit("add-user", currentUser._id);
+    }
+  }, [currentUser]);
+
+  useEffect(async () => {
+    if (currentUser) {
+      if (currentUser.isAvatarImageSet) {
+        let id = currentUser._id;
+        dispatch(GetProfileAuthInitial({ GetProfileRoute, id })).then(
+          (data) => {
+            setContacts(data?.payload?.users);
+          }
+        );
+      } else {
+        navigate("/setAvatar");
+      }
+    }
+  }, [currentUser]);
+  const handleChatChange = (chat) => {
+    setCurrentChat(chat);
+  };
   return (
     <>
       <Container>
         <div className="container">
+          <Contacts contacts={contacts} changeChat={handleChatChange} />
           {currentChat === undefined ? (
             <Welcome />
           ) : (
-            // <ChatContainer currentChat={currentChat} socket={socket} />
-            ""
+            <ChatContainer currentChat={currentChat} socket={socket} />
           )}
         </div>
       </Container>

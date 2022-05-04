@@ -21,12 +21,14 @@ app.use(
     verify: (req, res, buffer) => (req["rawBody"] = buffer),
   })
 );
+
 //!router import
 const Users = require("./Routes/UserRoute.js");
+const Messages = require("./Routes/MessageRoute.js");
 
 //!Link router Main
 app.use("/api/auth", Users);
-//Auhthenticate customer
+app.use("/api/message", Messages);
 
 // app.use(express.static(path.join(__dirname, "../frontend/build")));
 

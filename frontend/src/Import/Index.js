@@ -9,3 +9,4 @@ export { default as Welcome } from "../Components/Welcome";
 export { default as Logout } from "../Components/Logout";
 export { default as ChatContainer } from "../Components/ChatContainer";
 export { default as ChatInput } from "../Components/ChatInput";
+export { default as Contacts } from "../Components/Contacts";

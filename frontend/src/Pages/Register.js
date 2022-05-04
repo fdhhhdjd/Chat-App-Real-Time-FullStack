@@ -69,13 +69,13 @@ export default function Register() {
         RegisterInitial({ RegisterRoute, username, email, password })
       ).then((data) => {
         if (data?.payload?.status === false) {
-          toast.error(data.payload.msg, toastOptions);
+          toast.error(data?.payload?.msg, toastOptions);
         } else {
           localStorage.setItem(
             process.env.REACT_APP_LOCALHOST_KEY,
-            JSON.stringify(data.user)
+            JSON.stringify(data?.payload?.user)
           );
-          toast.success(data.payload.msg, toastOptions);
+          toast.success(data?.payload?.msg, toastOptions);
           navigate("/");
         }
       });

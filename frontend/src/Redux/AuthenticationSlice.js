@@ -25,17 +25,23 @@ export const LoginInitial = createAsyncThunk(
 export const LogoutInitial = createAsyncThunk(
   "Auth/Logout",
   async ({ LogoutRoute, id }) => {
-    const response = await axios.post(`${LogoutRoute}/${id}`);
+    const response = await axios.get(`${LogoutRoute}/${id}`);
     return response.data;
   }
 );
 export const SetAvatarAuthInitial = createAsyncThunk(
   "Auth/SetAvatar",
   async ({ SetAVatarRoute, image, id }) => {
-    console.log(SetAVatarRoute, "oke");
     const response = await axios.post(`${SetAVatarRoute}/${id}`, {
       image,
     });
+    return response.data;
+  }
+);
+export const GetProfileAuthInitial = createAsyncThunk(
+  "Auth/GetProfile",
+  async ({ GetProfileRoute, id }) => {
+    const response = await axios.get(`${GetProfileRoute}/${id}`);
     return response.data;
   }
 );
@@ -43,6 +49,7 @@ const initialState = {
   loading: false,
   error: null,
   auth: [],
+  profile: [],
 };
 const AuthenticationSlice = createSlice({
   name: "Auth",
@@ -77,6 +84,18 @@ const AuthenticationSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    //?Logout
+    [LogoutInitial.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [LogoutInitial.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.auth = action.payload;
+    },
+    [LogoutInitial.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
     //?Set Avatar
     [SetAvatarAuthInitial.pending]: (state, action) => {
       state.loading = true;
@@ -85,6 +104,18 @@ const AuthenticationSlice = createSlice({
       state.loading = false;
     },
     [SetAvatarAuthInitial.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    //?Get profile
+    [GetProfileAuthInitial.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [GetProfileAuthInitial.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.profile = action.payload;
+    },
+    [GetProfileAuthInitial.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
