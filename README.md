@@ -1,12 +1,8 @@
-# BackEnd Code By: Nguyễn Tiến Tài
+# BackEnd And Frontend Code By: Nguyễn Tiến Tài
 
-## Tài Khoản thanh toán tiền chuyển khoản
+## WebSite Chat:https://chat-app-tientai.netlify.app/
 
-## Tk: nguyentientai@gmail.com
-
-## Mk: Taideptrai123
-
-## Api Online thay localhost: https://shopshoetaiheo.herokuapp.com/
+## Api Online thay localhost: https://chattientaidev.herokuapp.com
 
 ## Tài Khoản Donate li Cf để có động lực code cho anh em tham khảo 😄😄
 
@@ -20,4 +16,4 @@
 
 ## SUPORT CONTACT:https://profile-forme.surge.sh/
 
-## Backend Đang lam....
+## Backend Đang hoàn thiện,...
